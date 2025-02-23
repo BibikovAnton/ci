@@ -30,13 +30,6 @@ jobs:
       - name: Build APK
         run: flutter build apk
 
-      - name: Upload APK as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-release.apk
-          path: build/app/outputs/flutter-apk/app-release.apk
-  #Чтобы сохранить APK для дальнейшего использования (например, для тестирования или публикации).
-
   test:
     runs-on: ubuntu-latest #виртуальная машина
     #Задача build содержит все шаги, необходимые для сборки и тестирования приложения.
