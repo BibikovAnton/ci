@@ -1,0 +1,62 @@
+name: Flutter CI
+# Это имя отображается в интерфейсе GitHub Actions, чтобы было проще идентифицировать workflow.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+#Автоматизация запуска workflow при изменении кода в основной ветке или при проверке кода перед слиянием.
+
+jobs:
+  build:
+    #начем будет запускаться
+    runs-on: ubuntu-latest #виртуальная машина
+    #Задача build содержит все шаги, необходимые для сборки и тестирования приложения.
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2 #скачает за нас репозиторий(GitHub Marckeyplace)
+      #Чтобы получить доступ к коду приложения для дальнейших шагов.
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+      #Чтобы иметь доступ к командам Flutter (flutter, dart и т.д.) для сборки и тестирования.
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+  #Чтобы сохранить APK для дальнейшего использования (например, для тестирования или публикации).
+
+  test:
+    runs-on: ubuntu-latest #виртуальная машина
+    #Задача build содержит все шаги, необходимые для сборки и тестирования приложения.
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2 #скачает за нас репозиторий(GitHub Marckeyplace)
+      #Чтобы получить доступ к коду приложения для дальнейших шагов.
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+      #Чтобы иметь доступ к командам Flutter (flutter, dart и т.д.) для сборки и тестирования.
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Build APK
+        run: flutter build apk
